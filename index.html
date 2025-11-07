@@ -6,9 +6,7 @@
     <title>L. Tamás - CV</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Google reCAPTCHA v2 (checkbox) -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 </head>
 <body>
@@ -236,8 +234,6 @@
                                 </div>
 
                                 <div class="form-row recaptcha-container">
-                                    <!-- Get your site key at: https://www.google.com/recaptcha/admin -->
-                                    <!-- Replace data-sitekey with your reCAPTCHA site key before deploying -->
                                     <div class="g-recaptcha" 
                                          data-sitekey="6Le-QAUsAAAAADNRmMjwq9NawlI9rR1xLla34d40"
                                          data-callback="onRecaptchaSuccess"
@@ -277,16 +273,12 @@
             EMAILJS_TEMPLATE_ID: 'template_gzgvhyg'
         };
 
-        (function initEmailJS() {
-            if (window.emailjs && CONFIG.EMAILJS_USER_ID) {
-                emailjs.init(CONFIG.EMAILJS_USER_ID);
-            }
-        })();
+        if (window.emailjs && CONFIG.EMAILJS_USER_ID) {
+            emailjs.init(CONFIG.EMAILJS_USER_ID);
+        }
 
-        // recaptcha state
         let recaptchaVerified = false;
-        
-        // Called by reCAPTCHA when solved
+
         function onRecaptchaSuccess(token) {
             recaptchaVerified = !!token;
             document.getElementById('send-btn').disabled = !recaptchaVerified;
@@ -297,21 +289,18 @@
             document.getElementById('send-btn').disabled = true;
         }
 
-        // Utility: show status messages
         function showAlert(message, isError = false) {
             const alertEl = document.getElementById('form-alert');
             alertEl.textContent = message;
             alertEl.className = isError ? 'form-alert error' : 'form-alert success';
         }
 
-        // Form submission
         const form = document.getElementById('contact-form');
         if (form) {
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                showAlert('', false);
+                showAlert('');
 
-                // Simple front-end validation
                 const name = document.getElementById('contact-name').value.trim();
                 const email = document.getElementById('contact-email').value.trim();
                 const message = document.getElementById('contact-message').value.trim();
@@ -321,39 +310,38 @@
                     showAlert('Please fill in all required fields.', true);
                     return;
                 }
+
                 if (!recaptchaVerified || !captchaResponse) {
                     showAlert('Please verify the reCAPTCHA.', true);
                     return;
                 }
 
-                // Build template params for EmailJS
-                const templateParams = {
-                    from_name: name,
-                    reply_to: email,
-                    message: message,
-                    'g-recaptcha-response': captchaResponse
-                };
-
-                // Send via EmailJS
                 if (!window.emailjs) {
-                    showAlert('Email service is not available. Try again later.', true);
+                    showAlert('Email service is not available.', true);
                     return;
                 }
 
+                const templateParams = {
+                    from_name: name,
+                    reply_to: email,
+                    message: message
+                };
+
                 document.getElementById('send-btn').disabled = true;
-                showAlert('Sending message...', false);
+                showAlert('Sending message...');
 
                 emailjs.send(CONFIG.EMAILJS_SERVICE_ID, CONFIG.EMAILJS_TEMPLATE_ID, templateParams)
                     .then(function () {
-                        showAlert('Message sent successfully. Thank you!', false);
+                        showAlert('Message sent successfully!');
                         form.reset();
-                        if (window.grecaptcha) grecaptcha.reset();
+                        grecaptcha.reset();
                         recaptchaVerified = false;
                         document.getElementById('send-btn').disabled = true;
-                    }, function (err) {
-                        console.error('EmailJS error:', err);
-                        showAlert('Failed to send message. Please try again later.', true);
-                        if (window.grecaptcha) grecaptcha.reset();
+                    })
+                    .catch(function (err) {
+                        console.error(err);
+                        showAlert('Failed to send message.', true);
+                        grecaptcha.reset();
                         recaptchaVerified = false;
                         document.getElementById('send-btn').disabled = true;
                     });

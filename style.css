@@ -1,6 +1,4 @@
-/* CSS Custom Properties for Theme Variables */
 :root {
-  /* Light Theme Colors - Pastel Green */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fffe;
   --bg-tertiary: #f0f9f5;
@@ -14,7 +12,6 @@
   --shadow-hover: rgba(127, 176, 105, 0.15);
 }
 
-/* Dark Theme Colors - Pastel Green */
 [data-theme="dark"] {
   --bg-primary: #1a1f1c;
   --bg-secondary: #242b26;
@@ -22,33 +19,12 @@
   --text-primary: #e8f5e8;
   --text-secondary: #b8c5b8;
   --text-muted: #7a8a7a;
-  --accent-primary: #8fc673;/* Contact Form Styles */
-.contact-form {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.form-row {
-  margin-bottom: 0.75rem;
-}
-
-.form-row:last-child {
-  margin-bottom: 0;
-}
-
-.form-row label {
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-primary);
-  font-weight: 500;
-}ndary: #a8d5a0;
+  --accent-primary: #8fc673;
+  --accent-secondary: #a8d5a0;
   --border-color: #3a4a3a;
   --shadow: rgba(143, 198, 115, 0.2);
   --shadow-hover: rgba(143, 198, 115, 0.3);
 }
-
-/* Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -102,9 +78,7 @@ body {
   box-shadow: 0 4px 15px var(--shadow-hover);
 }
 
-/* Header navigation removed */
-
-/* Header Card Styles */
+/* Header Card */
 .header-card-section {
   padding: 60px 0 40px 0;
   background: var(--bg-primary);
@@ -188,9 +162,6 @@ body {
   font-size: 1.1rem;
 }
 
-/* Navigation styles removed */
-
-/* Main Content */
 main {
   margin-top: 0;
 }
@@ -263,7 +234,6 @@ main {
   flex-direction: column;
 }
 
-/* Buttons */
 .btn {
   display: inline-block;
   padding: 12px 30px;
@@ -300,7 +270,6 @@ main {
   transform: translateY(-2px);
 }
 
-/* Sections */
 section {
   padding: 40px 0;
 }
@@ -315,7 +284,6 @@ section h2 {
   display: inline-block;
 }
 
-/* About Me Section */
 .about-text {
   font-size: 1rem;
   line-height: 1.7;
@@ -356,7 +324,6 @@ section h2 {
   font-weight: bold;
 }
 
-/* Skills Section */
 .skills-category {
   margin-bottom: 1.5rem;
 }
@@ -394,7 +361,6 @@ section h2 {
   background: var(--accent-secondary);
 }
 
-/* Experience & Education Sections */
 .experience-item,
 .education-item {
   margin-bottom: 1.5rem;
@@ -461,7 +427,6 @@ section h2 {
   margin-bottom: 0.3rem;
 }
 
-/* Projects Section */
 .project-item {
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
@@ -504,7 +469,6 @@ section h2 {
   font-size: 0.95rem;
 }
 
-/* Contact Section */
 .contact-info {
   margin-bottom: 1.5rem;
 }
@@ -540,7 +504,6 @@ section h2 {
   line-height: 1.6;
 }
 
-/* Contact Form */
 .contact-form {
   width: 100%;
   max-width: 600px;
@@ -641,7 +604,6 @@ section h2 {
   color: var(--text-muted);
 }
 
-/* Responsive Design */
 @media (max-width: 699px) {
   .grid-layout {
     grid-template-columns: 1fr;
@@ -687,7 +649,6 @@ section h2 {
     gap: 0.2rem;
   }
 
-  /* Header Card Mobile */
   .header-card {
     flex-direction: row;
     gap: 1.5rem;
@@ -718,7 +679,6 @@ section h2 {
 }
 
 @media (max-width: 600px) {
-  /* Header Card Mobile - Stack vertically */
   .header-card {
     flex-direction: column;
     text-align: center;
@@ -773,19 +733,15 @@ section h2 {
     padding: 60px 0;
   }
 
-  /* Navigation responsive styles removed */
-
   .project-card {
     padding: 1.5rem;
   }
 }
 
-/* Smooth transitions for theme switching - Reduced animations */
 * {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Accessibility improvements */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -798,7 +754,6 @@ section h2 {
   }
 }
 
-/* Focus styles for better accessibility */
 button:focus,
 input:focus,
 textarea:focus,
@@ -807,7 +762,6 @@ a:focus {
   outline-offset: 2px;
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
   :root {
     --border-color: #000000;
@@ -820,7 +774,6 @@ a:focus {
   }
 }
 
-/* Contact Form Styles */
 .contact-form {
   width: 100%;
   max-width: 600px;
@@ -914,7 +867,6 @@ a:focus {
   border: 1px solid #d5f5e3;
 }
 
-/* Dark theme adjustments for form */
 [data-theme="dark"] .form-alert.error {
   background-color: rgba(231, 76, 60, 0.1);
   border-color: rgba(231, 76, 60, 0.2);
@@ -925,7 +877,6 @@ a:focus {
   border-color: rgba(46, 204, 113, 0.2);
 }
 
-/* Form responsive design */
 @media (max-width: 768px) {
   .contact-form {
     padding: 0;
