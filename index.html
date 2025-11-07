@@ -6,6 +6,10 @@
     <title>L. Tamás - CV</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google reCAPTCHA v2 (checkbox) -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -73,6 +77,51 @@
                                     <li>Results-oriented approach</li>
                                 </ul>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Card -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Contact</h3>
+                        </div>
+                        <div class="card-content">
+                            <form id="contact-form" class="contact-form" novalidate>
+                                <div class="form-row">
+                                    <label for="contact-name">Name</label>
+                                    <input id="contact-name" name="from_name" type="text" required 
+                                           aria-required="true" placeholder="Your name"/>
+                                </div>
+
+                                <div class="form-row">
+                                    <label for="contact-email">Email</label>
+                                    <input id="contact-email" name="reply_to" type="email" required 
+                                           aria-required="true" placeholder="your.email@example.com"/>
+                                </div>
+
+                                <div class="form-row">
+                                    <label for="contact-message">Message</label>
+                                    <textarea id="contact-message" name="message" rows="5" required 
+                                              aria-required="true" placeholder="Your message..."></textarea>
+                                </div>
+
+                                <div class="form-row recaptcha-container">
+                                    <!-- Get your site key at: https://www.google.com/recaptcha/admin -->
+                                    <!-- Replace data-sitekey with your reCAPTCHA site key before deploying -->
+                                    <div class="g-recaptcha" 
+                                         data-sitekey="6Le-QAUsAAAAADNRmMjwq9NawlI9rR1xLla34d40"
+                                         data-callback="onRecaptchaSuccess"
+                                         data-expired-callback="onRecaptchaExpired"></div>
+                                </div>
+
+                                <div class="form-row form-actions">
+                                    <button id="send-btn" type="submit" class="btn-submit" disabled>
+                                        Send Message
+                                    </button>
+                                </div>
+
+                                <div id="form-alert" class="form-alert" role="status" aria-live="polite"></div>
+                            </form>
                         </div>
                     </div>
 
@@ -204,29 +253,7 @@
                         </div>
                     </div>
 
-                    <!-- Contact Card -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h3>Contact</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="contact-info">
-                                <div class="contact-item">
-                                    <strong>Email:</strong> xeen3m@gmail.com
-                                </div>
-                                <div class="contact-item">
-                                    <strong>Location:</strong> Targu-Mures, Romania
-                                </div>
-                                <div class="contact-item">
-                                    <strong>Availability:</strong> Available for remote work
-                                </div>
-                            </div>
-                            <div class="contact-message">
-                                <p>Ready to discuss new opportunities and collaborate on exciting projects. 
-                                Feel free to reach out for any inquiries!</p>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </section>
@@ -240,5 +267,98 @@
     </footer>
 
     <script src="script.js"></script>
+
+    <script>
+        // Email + reCAPTCHA contact form handler
+        // === Configuration placeholders - replace with your actual IDs before production ===
+        const CONFIG = {
+            EMAILJS_USER_ID: 'EMAILJS_USER_ID_PLACEHOLDER',      // e.g. 'user_xxx'
+            EMAILJS_SERVICE_ID: 'EMAILJS_SERVICE_ID_PLACEHOLDER',
+            EMAILJS_TEMPLATE_ID: 'EMAILJS_TEMPLATE_ID_PLACEHOLDER'
+        };
+
+        (function initEmailJS() {
+            if (window.emailjs && CONFIG.EMAILJS_USER_ID) {
+                emailjs.init(CONFIG.EMAILJS_USER_ID);
+            }
+        })();
+
+        // recaptcha state
+        let recaptchaVerified = false;
+        
+        // Called by reCAPTCHA when solved
+        function onRecaptchaSuccess(token) {
+            recaptchaVerified = !!token;
+            document.getElementById('send-btn').disabled = !recaptchaVerified;
+        }
+
+        function onRecaptchaExpired() {
+            recaptchaVerified = false;
+            document.getElementById('send-btn').disabled = true;
+        }
+
+        // Utility: show status messages
+        function showAlert(message, isError = false) {
+            const alertEl = document.getElementById('form-alert');
+            alertEl.textContent = message;
+            alertEl.className = isError ? 'form-alert error' : 'form-alert success';
+        }
+
+        // Form submission
+        const form = document.getElementById('contact-form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                showAlert('', false);
+
+                // Simple front-end validation
+                const name = document.getElementById('contact-name').value.trim();
+                const email = document.getElementById('contact-email').value.trim();
+                const message = document.getElementById('contact-message').value.trim();
+                const captchaResponse = window.grecaptcha ? grecaptcha.getResponse() : '';
+
+                if (!name || !email || !message) {
+                    showAlert('Please fill in all required fields.', true);
+                    return;
+                }
+                if (!recaptchaVerified || !captchaResponse) {
+                    showAlert('Please verify the reCAPTCHA.', true);
+                    return;
+                }
+
+                // Build template params for EmailJS
+                const templateParams = {
+                    from_name: name,
+                    reply_to: email,
+                    message: message,
+                    'g-recaptcha-response': captchaResponse
+                };
+
+                // Send via EmailJS
+                if (!window.emailjs) {
+                    showAlert('Email service is not available. Try again later.', true);
+                    return;
+                }
+
+                document.getElementById('send-btn').disabled = true;
+                showAlert('Sending message...', false);
+
+                emailjs.send(CONFIG.EMAILJS_SERVICE_ID, CONFIG.EMAILJS_TEMPLATE_ID, templateParams)
+                    .then(function () {
+                        showAlert('Message sent successfully. Thank you!', false);
+                        form.reset();
+                        if (window.grecaptcha) grecaptcha.reset();
+                        recaptchaVerified = false;
+                        document.getElementById('send-btn').disabled = true;
+                    }, function (err) {
+                        console.error('EmailJS error:', err);
+                        showAlert('Failed to send message. Please try again later.', true);
+                        if (window.grecaptcha) grecaptcha.reset();
+                        recaptchaVerified = false;
+                        document.getElementById('send-btn').disabled = true;
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
